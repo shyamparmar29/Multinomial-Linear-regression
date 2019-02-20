@@ -10,11 +10,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.linear_model import LinearRegression
+from sklearn import cross_validation
 from sklearn.metrics import mean_squared_error
 
+# Load data 
 data = pd.read_csv('student.csv')
-print(data.shape)
 
+# Get scores to array
 math = data['Math'].values
 read = data['Reading'].values
 write = data['Writing'].values
@@ -28,6 +30,9 @@ plt.show()
 X = np.array([math, read]).T
 Y = np.array(write)
 
+# Splitting training and testing data
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
+
 # Model Intialization
 reg = LinearRegression()
 
@@ -36,6 +41,10 @@ reg = reg.fit(X, Y)
 
 # Y Prediction
 Y_pred = reg.predict(X)
+
+reg.fit(X_train, y_train)
+confidence = reg.score(X_test, y_test)
+print("Confidence : ", confidence)  # Confidence is accuracy of the model
 
 # Model Evaluation
 rmse = np.sqrt(mean_squared_error(Y, Y_pred))
